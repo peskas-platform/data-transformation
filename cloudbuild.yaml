@@ -1,0 +1,62 @@
+steps:
+
+- id: Build container image
+  name: gcr.io/cloud-builders/docker
+  args:
+  - build
+  - -f
+  - Dockerfile
+  - -t
+  - gcr.io/$PROJECT_ID/${_IMAGE_NAME_}:$BUILD_ID
+  - '.'
+
+- id: Push image to registry
+  name: gcr.io/cloud-builders/docker
+  args:
+  - push
+  - gcr.io/peskas/${_IMAGE_NAME_}:$BUILD_ID
+
+- id: Deploy Cloud Run
+  name: gcr.io/cloud-builders/gcloud
+  args:
+  - run
+  - deploy
+  - ${_RUN_NAME_}
+  - --image
+  - gcr.io/$PROJECT_ID/${_IMAGE_NAME_}:$BUILD_ID
+  - --region
+  - ${_REGION_}
+  - --platform
+  - managed
+  - --concurrency
+  - '80'
+  - --port
+  - default
+  - --max-instances
+  - default
+  - --memory
+  - 256Mi
+  - --cpu
+  - '1'
+  - --clear-env-vars
+  - --allow-unauthenticated
+
+# For unauthenticated
+# - id: Auth Cloud run
+#   name: gcr.io/cloud-builders/gcloud
+#   args:
+#   - |
+#     run services add-iam-policy-binding \
+#       --region ${_REGION_} --member=allUsers\
+#       --role=roles/run.invoker \
+#       --platform managed ${_RUN_NAME_}
+
+timeout: 600s
+
+images:
+- ['gcr.io/${PROJECT_ID}/${_IMAGE_NAME_}:$BUILD_ID']
+
+substitutions:
+  _IMAGE_NAME_: data-transformation
+  _REGION_: asia-east1
+  _RUN_NAME_: data-transformation
