@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  rstudio:
+    build: .
+    image: data-transformation-dev-rstudio
+    container_name: data-transformation-dev-rstudio
+    ports:
+      - "8788:8787"
+    volumes:
+      - ..:/home/rstudio/data-ingestion
+    environment: 
+      DISABLE_AUTH: "true"
