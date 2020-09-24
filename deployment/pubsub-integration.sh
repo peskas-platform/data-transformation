@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Steps following https://cloud.google.com/run/docs/tutorials/pubsub
+# Before running this steps ensure that the topics and notifications for the
+# storage buckets already exist
 
 PROJECT_ID=peskas
 PROJECT_NUMBER=906077803519
