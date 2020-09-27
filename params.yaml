@@ -1,0 +1,25 @@
+datasets:
+  - bucket: timor
+    ingestion:
+      type: all-data
+    name: catch_timor_structured.csv
+    source_uri: gs://timor/catch_timor_structured.csv
+    source_format: CSV
+    project: peskas
+    bigquery:
+      dataset: timor_catch
+      location: asia-east1
+      table: timor_catch_raw_csv
+
+  - bucket: timor
+    ingestion:
+      type: all-data
+    name: test.csv
+    source_uri: gs://timor/catch_timor_structured.csv
+    source_format: CSV
+    project: peskas
+    bigquery:
+      dataset: timor_catch
+      location: asia-east1
+      table: test_csv
+
