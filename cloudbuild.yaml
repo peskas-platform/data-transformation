@@ -1,5 +1,12 @@
 steps:
 
+- id: Download authentication
+  name: gcr.io/cloud-builders/gcloud
+  entrypoint: bash
+  args:
+  - -c
+  - gcloud secrets versions access latest --secret=data-transformation-secret > gcs_secret.json
+
 - id: Build container image
   name: gcr.io/cloud-builders/docker
   args:
@@ -40,6 +47,9 @@ steps:
   - '1'
   - --clear-env-vars
   - --allow-unauthenticated
+  env:
+  - 'GCS_AUTH_FILE=gcs_secret.json'
+  - 'ENV=prod'
 
 # For unauthenticated
 # - id: Auth Cloud run
