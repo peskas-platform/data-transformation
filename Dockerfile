@@ -1,6 +1,6 @@
 FROM rocker/r-ver:4.0.2 AS prod
 
-RUN install2.r googleCloudRunner plumber bigrquery
+RUN install2.r googleCloudRunner plumber bigrquery janitor
 
 COPY . /home
 WORKDIR /home
