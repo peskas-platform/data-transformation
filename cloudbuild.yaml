@@ -42,7 +42,7 @@ steps:
   - --max-instances
   - default
   - --memory
-  - 256Mi
+  - 2Gi
   - --cpu
   - '1'
   - --clear-env-vars
