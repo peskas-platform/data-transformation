@@ -1,7 +1,15 @@
 # This script is used to populate the BigQuery tables for incremental datasets
 # the first time. Afterwards the API (when called by pub/sub) will append the
 # corresponding files when corresponding. It deletes the existing table first so
-# use with caution.
+# use with caution. Note that this works in parallel and must be run from the
+# container in .devcontainer (which includes furrr). It also requires
+# environment variable to contain the location of the Google Authentication File
+
+setwd(here::here())
+message("Working directory:", getwd())
+
+library(furrr)
+plan(multisession)
 
 purrr::walk(list.files(here::here("R"), full.names = T), source)
 params <- yaml::read_yaml("params.yaml")
@@ -42,13 +50,15 @@ create_incremental_bq <- function(incremental_dataset){
     project = incremental_dataset$project,
     dataset = incremental_dataset$bigquery$dataset,
     table = incremental_dataset$bigquery$table)
-  bigrquery::bq_table_delete(this_table)
+  if (bigrquery::bq_table_exists(this_table)) {
+    bigrquery::bq_table_delete(this_table)
+  }
 
   # Loop over data (file) parameters and appends all files to table. Creates the
   # table if needed
-  purrr::map(all_file_params, upload_to_bq)
+  furrr::future_map(all_file_params, upload_to_bq, quiet = FALSE)
 
 }
 
 # Loop over each incremental dataset and create the table
-purrr::map(incremental_datasets, create_incremental_bq)
+purrr::walk(incremental_datasets, create_incremental_bq)
