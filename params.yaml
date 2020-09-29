@@ -1,0 +1,33 @@
+datasets:
+  - bucket: timor
+    name: catch_timor_structured.csv
+    source_uri: gs://timor/catch_timor_structured.csv
+    source_format: CSV
+    project: peskas
+    bigquery:
+      dataset: timor_catch
+      location: asia-east1
+      table: timor_catch_raw_csv
+      mode: download-first
+      nskip: 1
+      write_disposition: WRITE_TRUNCATE
+      create_disposition: CREATE_IF_NEEDED
+
+  - bucket: timor
+    name: catch_timor_unstructured.json
+    ignore: true
+
+  - bucket: pelagic-data-systems
+    name: pelagic-data_
+    source_uri: gs://timor/pelagic_data_
+    source_format: CSV
+    col_types: Tdddddddccdc
+    project: peskas
+    bigquery:
+      dataset: pelagic_data
+      location: asia-east1
+      table: pelagic_data_raw
+      mode: download-first
+      nskip: 1
+      write_disposition: WRITE_APPEND
+      create_disposition: CREATE_NEVER
