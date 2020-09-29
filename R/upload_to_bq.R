@@ -1,7 +1,6 @@
 
 upload_to_bq <- function(this_data, ...){
 
-  cat(Sys.getenv('GCS_AUTH_FILE'))
   # Authenticate to big query
   bigrquery::bq_auth(path = Sys.getenv('GCS_AUTH_FILE'))
 
@@ -34,20 +33,18 @@ upload_to_bq <- function(this_data, ...){
       googleCloudStorageR::gcs_get_object(object_name = this_data$name,
                                           bucket = this_data$bucket,
                                           saveToDisk = values_path)
-      cat("downloaded data\n")
       # Clean column names
       values <- readr::read_csv(values_path, guess_max = 10000,
                                 col_types = this_data$col_types)
       values <- janitor::clean_names(values)
-      cat("cleaned colnames\n")
+
       # Upload data
       bigrquery::bq_table_upload(
         table_bq,
         values,
         write_disposition = this_data$bigquery$write_disposition,
         create_disposition = this_data$bigquery$create_disposition,
-        quiet = TRUE)
-      cat("uploaded data\n")
+        ...)
 
     } else {
       "Don't know how to process that type of data"
@@ -60,6 +57,8 @@ upload_to_bq <- function(this_data, ...){
       source_format = this_data$source_format,
       write_disposition = this_data$bigquery$write_disposition,
       create_disposition = this_data$bigquery$create_disposition,
-      nskip = this_data$bigquery$nskip)
+      nskip = this_data$bigquery$nskip,
+      ...)
   }
+
 }
