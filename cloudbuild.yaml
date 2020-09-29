@@ -36,11 +36,11 @@ steps:
   - --platform
   - managed
   - --concurrency
-  - '80'
+  - '20'
   - --port
   - default
   - --max-instances
-  - default
+  - '5' # Need to limit the number of max instances so that it doesn't overwhelm BigQuery
   - --memory
   - 2Gi
   - --cpu
