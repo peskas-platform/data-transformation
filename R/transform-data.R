@@ -44,6 +44,7 @@ transform_data <- function(x){
   }
 
   cat(as.character(list(this_dataset = this_dataset)))
-  upload_to_bq(this_dataset)
+  upload_to_bq(this_dataset, quiet = TRUE)
+  return(TRUE)
 }
 
