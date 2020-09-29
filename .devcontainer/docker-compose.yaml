@@ -1,9 +1,7 @@
 version: '3.3'
 services:
-  rstudio:
+  rstudio-data-transformation:
     build: .
-    image: data-transformation-dev-rstudio
-    container_name: data-transformation-dev-rstudio
     ports:
       - "8788:8787"
     volumes:
