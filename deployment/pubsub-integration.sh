@@ -17,7 +17,7 @@ PELAGIC_TOPIC="pelagic-raw-update"
 gcloud pubsub topics create ${TIMOR_TOPIC} \
    --project=${PROJECT_ID}
 # For Pelagic
-gcloud pubsub topics crate ${PELAGIC_TOPIC} \
+gcloud pubsub topics create ${PELAGIC_TOPIC} \
   --project=${PROJECT_ID}
 
 # 2. Setup notifications from the buckets. Only when new data is added
@@ -25,14 +25,16 @@ gcloud pubsub topics crate ${PELAGIC_TOPIC} \
 gsutil notification create \
    -t ${TIMOR_TOPIC} \
    -f json \
-   -e OBJECT_FINALIZE gs://${TIMOR_BUCKET}
-   -p catch_timor_structured
+   -e OBJECT_FINALIZE \
+   -p catch_timor_structured \
+   gs://${TIMOR_BUCKET}
 # For Pelagic
 gsutil notification create \
    -t ${PELAGIC_TOPIC} \
    -f json \
-   -e OBJECT_FINALIZE gs://${PELAGIC_BUCKET}
-   -p catch_timor_structured
+   -e OBJECT_FINALIZE \
+   -p pelagic-data_ \
+   gs://${PELAGIC_BUCKET}
 
 # 3. Enable Pub/Sub to create authentication tokens in your project
 gcloud projects add-iam-policy-binding $PROJECT_ID \
@@ -51,7 +53,7 @@ gcloud run services add-iam-policy-binding ${_RUN_NAME_} \
 # 6. Create a Pub/Sub subscription with the service account
 # For timor raw
 gcloud pubsub subscriptions create timor-raw-storage-subscription \
-   --topic timor-raw-storage \
+   --topic ${TIMOR_TOPIC} \
    --topic-project=${PROJECT_ID} \
    --push-endpoint=https://data-transformation-rbfn4deujq-de.a.run.app/transform-data-pubsub \
    --push-auth-service-account=cloud-run-pubsub-invoker@${PROJECT_ID}.iam.gserviceaccount.com \
@@ -60,7 +62,7 @@ gcloud pubsub subscriptions create timor-raw-storage-subscription \
    --max-retry-delay=600s
 # For pelagic raw
 gcloud pubsub subscriptions create pelagic-raw-storage-subscription \
-   --topic pelagic-raw-storage \
+   --topic ${PELAGIC_TOPIC} \
    --topic-project=${PROJECT_ID} \
    --push-endpoint=https://data-transformation-rbfn4deujq-de.a.run.app/transform-data-pubsub \
    --push-auth-service-account=cloud-run-pubsub-invoker@${PROJECT_ID}.iam.gserviceaccount.com \
