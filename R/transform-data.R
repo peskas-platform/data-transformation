@@ -10,7 +10,8 @@ transform_data <- function(x){
 
   params <- yaml::read_yaml("params.yaml")
 
-  cat(as.character(list(x = x)))
+  cat(as.character(Sys.time()),
+      "Data parameters:", as.character(list(data = x)), "\n")
 
   # Identify and validate dataset
   this_dataset <- purrr::keep(

@@ -24,6 +24,9 @@ params <- yaml::read_yaml("params.yaml")
 #' @param message a pub/sub message
 function(message=NULL){
 
+  cat(as.character(Sys.time()),
+      "Received message", as.character(list(message = message)),"\n")
+
   # If message has not been properly parsed, address that
   if (class(message) == "character") {
     message <- jsonlite::fromJSON(message)
