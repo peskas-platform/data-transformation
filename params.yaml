@@ -30,4 +30,4 @@ datasets:
       mode: download-first
       nskip: 1
       write_disposition: WRITE_APPEND
-      create_disposition: CREATE_NEVER
+      create_disposition: CREATE_IF_NEEDED
