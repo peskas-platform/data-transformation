@@ -43,8 +43,10 @@ transform_data <- function(x){
     this_schema <- NULL
   }
 
-  cat(as.character(list(this_dataset = this_dataset)))
+  # cat(as.character(Sys.time()), "Internal parameters: ",
+  #     as.character(list(this_dataset = this_dataset)), "\n")
   upload_to_bq(this_dataset, quiet = TRUE)
+  cat("Success with", x$id, "\n")
   return(TRUE)
 }
 
