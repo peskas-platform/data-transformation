@@ -8,9 +8,6 @@
 setwd(here::here())
 message("Working directory:", getwd())
 
-library(furrr)
-plan(multisession)
-
 purrr::walk(list.files(here::here("R"), full.names = T), source)
 params <- yaml::read_yaml("params.yaml")
 
@@ -56,7 +53,7 @@ create_incremental_bq <- function(incremental_dataset){
 
   # Loop over data (file) parameters and appends all files to table. Creates the
   # table if needed
-  furrr::future_map(all_file_params, upload_to_bq, quiet = FALSE)
+  purrr::walk(all_file_params, upload_to_bq, quiet = FALSE)
 
 }
 
