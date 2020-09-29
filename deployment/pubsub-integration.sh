@@ -7,26 +7,48 @@
 PROJECT_ID=peskas
 PROJECT_NUMBER=906077803519
 _RUN_NAME_="data-transformation"
+TIMOR_BUCKET=timor
+TIMOR_TOPIC="timor-raw-structured-update"
+PELAGIC_BUCKET="pelagic-data-systems-raw"
+PELAGIC_TOPIC="pelagic-raw-update"
 
-# 1. Enable Pub/Sub to create authentication tokens in your project
+# 1. Create topics
+# For Timor
+gcloud pubsub topics create ${TIMOR_TOPIC} \
+   --project=${PROJECT_ID}
+# For Pelagic
+gcloud pubsub topics crate ${PELAGIC_TOPIC} \
+  --project=${PROJECT_ID}
 
+# 2. Setup notifications from the buckets. Only when new data is added
+# For Timor we're only interested in the structured data for now
+gsutil notification create \
+   -t ${TIMOR_TOPIC} \
+   -f json \
+   -e OBJECT_FINALIZE gs://${TIMOR_BUCKET}
+   -p catch_timor_structured
+# For Pelagic
+gsutil notification create \
+   -t ${PELAGIC_TOPIC} \
+   -f json \
+   -e OBJECT_FINALIZE gs://${PELAGIC_BUCKET}
+   -p catch_timor_structured
+
+# 3. Enable Pub/Sub to create authentication tokens in your project
 gcloud projects add-iam-policy-binding $PROJECT_ID \
-     --member=serviceAccount:service-${PROJECT_NUMBER}@gcp-sa-pubsub.iam.gserviceaccount.com \
-     --role=roles/iam.serviceAccountTokenCreator
+   --member=serviceAccount:service-${PROJECT_NUMBER}@gcp-sa-pubsub.iam.gserviceaccount.com \
+   --role=roles/iam.serviceAccountTokenCreator
 
-# 2. Create or select a service account to represent the Pub/Sub subscription identity.
-
+# 4. Create or select a service account to represent the Pub/Sub subscription identity.
 gcloud iam service-accounts create cloud-run-pubsub-invoker \
-     --display-name "Cloud Run Pub/Sub Invoker"
+   --display-name "Cloud Run Pub/Sub Invoker"
 
-# 3. Create a Pub/Sub subscription with the service account
-
-# a.Give the invoker service account permission to invoke your pubsub-tutorial service:
+# 5 .Give the invoker service account permission to invoke your pubsub-tutorial service:
 gcloud run services add-iam-policy-binding ${_RUN_NAME_} \
    --member=serviceAccount:cloud-run-pubsub-invoker@${PROJECT_ID}.iam.gserviceaccount.com \
    --role=roles/run.invoker --platform managed
 
-# b. Create a Pub/Sub subscription with the service account
+# 6. Create a Pub/Sub subscription with the service account
 # For timor raw
 gcloud pubsub subscriptions create timor-raw-storage-subscription \
    --topic timor-raw-storage \
