@@ -46,20 +46,10 @@ steps:
   - --cpu
   - '1'
   - --clear-env-vars
-  - --allow-unauthenticated
+  - --no-allow-unauthenticated
   env:
   - 'GCS_AUTH_FILE=gcs_secret.json'
   - 'ENV=prod'
-
-# For unauthenticated
-# - id: Auth Cloud run
-#   name: gcr.io/cloud-builders/gcloud
-#   args:
-#   - |
-#     run services add-iam-policy-binding \
-#       --region ${_REGION_} --member=allUsers\
-#       --role=roles/run.invoker \
-#       --platform managed ${_RUN_NAME_}
 
 timeout: 600s
 
