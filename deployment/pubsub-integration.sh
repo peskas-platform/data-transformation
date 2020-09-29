@@ -28,11 +28,20 @@ gcloud run services add-iam-policy-binding ${_RUN_NAME_} \
 
 # b. Create a Pub/Sub subscription with the service account
 # For timor raw
-gcloud pubsub subscriptions create timor-raw-storage-subscription --topic timor-raw-storage \
-   --push-endpoint=https://data-transformation-rbfn4deujq-de.a.run.app/transform-timor-pubsub \
-   --push-auth-service-account=cloud-run-pubsub-invoker@${PROJECT_ID}.iam.gserviceaccount.com
+gcloud pubsub subscriptions create timor-raw-storage-subscription \
+   --topic timor-raw-storage \
+   --topic-project=${PROJECT_ID} \
+   --push-endpoint=https://data-transformation-rbfn4deujq-de.a.run.app/transform-data-pubsub \
+   --push-auth-service-account=cloud-run-pubsub-invoker@${PROJECT_ID}.iam.gserviceaccount.com \
+   --ack-deadline=600 \
+   --min-retry-delay=60s \
+   --max-retry-delay=600s
 # For pelagic raw
-gcloud pubsub subscriptions create pelagic-raw-storage-subscription --topic pelagic-raw-storage \
-   --push-endpoint=https://data-transformation-rbfn4deujq-de.a.run.app/pelagic-timor-pubsub \
-   --push-auth-service-account=cloud-run-pubsub-invoker@${PROJECT_ID}.iam.gserviceaccount.com
-
+gcloud pubsub subscriptions create pelagic-raw-storage-subscription \
+   --topic pelagic-raw-storage \
+   --topic-project=${PROJECT_ID} \
+   --push-endpoint=https://data-transformation-rbfn4deujq-de.a.run.app/transform-data-pubsub \
+   --push-auth-service-account=cloud-run-pubsub-invoker@${PROJECT_ID}.iam.gserviceaccount.com \
+   --ack-deadline=600 \
+   --min-retry-delay=60s \
+   --max-retry-delay=600s
